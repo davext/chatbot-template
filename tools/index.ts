@@ -1,4 +1,9 @@
-import { type InferUITools, type UIDataTypes, type UIMessage } from "ai"
+import {
+  type InferUITools,
+  type ToolSet,
+  type UIDataTypes,
+  type UIMessage,
+} from "ai"
 
 import { askUser } from "./ask_user"
 import { githubRepo } from "./github_repo"
@@ -12,6 +17,14 @@ const baseTools = {
 export function getTools(modelId: string) {
   const webSearch = getWebSearch(modelId)
   return webSearch ? { ...baseTools, web_search: webSearch } : baseTools
+}
+
+// iMessage has no questionnaire UI, and ask_user has no server execute function.
+export function getIMessageTools(modelId: string): ToolSet {
+  const tools: ToolSet = { github_repo: githubRepo }
+  const webSearch = getWebSearch(modelId)
+  if (webSearch) tools.web_search = webSearch
+  return tools
 }
 
 export type ChatUIMessage = UIMessage<
